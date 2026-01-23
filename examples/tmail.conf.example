@@ -1,0 +1,132 @@
+# Terminal Mail Configuration Example
+# Copy this file to ~/.tmail.conf and customize
+#
+# Configuration has three sections:
+#   1. [defaults] - Global defaults
+#   2. [[smtp_servers]] - SMTP server configurations (can be shared by multiple identities)
+#   3. [[identities]] - FROM address identities with friendly names
+
+[defaults]
+# Number of retry attempts on send failure (default: 1)
+retries = 1
+
+# Open editor for composing emails (default: true)
+interactive = true
+
+# Skip "Send this email?" confirmation prompt (default: false)
+skip_confirmation = false
+
+# Default identity to use (by friendly name)
+default_identity = "Personal Gmail"
+
+
+# =============================================================================
+# SMTP SERVERS
+# Define your SMTP servers here. Identities reference these by name.
+# =============================================================================
+
+[[smtp_servers]]
+# Friendly name for this SMTP server (required, used by identities)
+name = "gmail"
+
+# SMTP server hostname (required)
+host = "smtp.gmail.com"
+
+# SMTP ports to try, in order (default: [587])
+ports = [587, 465]
+
+# SMTP username (optional)
+user = "yourname@gmail.com"
+
+# Password options (choose one):
+#   1. password_cmd - Command to retrieve password (most secure, recommended)
+#   2. password - Static password (plain or base64 encoded)
+
+# Option 1: Command to retrieve password (recommended)
+# Examples:
+#   macOS Keychain: security find-generic-password -s 'gmail-tmail' -w
+#   pass:           pass show email/gmail
+#   1Password:      op item get 'Gmail' --fields password
+#   Environment:    echo $GMAIL_APP_PASSWORD
+password_cmd = "security find-generic-password -s 'gmail-tmail' -w"
+
+# Option 2: Static password (if not using password_cmd)
+# password = "your-app-password-here"
+# password_encoding = "plain"  # or "base64" (default: "plain")
+
+# For base64 encoding, encode your password:
+#   echo -n 'your-password' | base64
+# Then use:
+# password = "eW91ci1wYXNzd29yZA=="
+# password_encoding = "base64"
+
+# Use TLS encryption (default: true)
+use_tls = true
+
+
+[[smtp_servers]]
+name = "company"
+host = "smtp.company.com"
+ports = [587]
+user = "you@company.com"
+password_cmd = "pass show email/work"
+use_tls = true
+
+
+[[smtp_servers]]
+name = "example_with_base64"
+host = "smtp.example.com"
+ports = [587]
+user = "user@example.com"
+password = "c2VjcmV0MTIz"  # base64 encoded "secret123"
+password_encoding = "base64"
+use_tls = true
+
+
+# =============================================================================
+# IDENTITIES
+# Define your FROM addresses here. Each can use any SMTP server.
+# =============================================================================
+
+[[identities]]
+# Friendly name for selection (required, e.g., "John's Work Email")
+name = "Personal Gmail"
+
+# Email address (required)
+email = "yourname@gmail.com"
+
+# Default display name (editable per-email in the composer)
+# This appears as "Display Name <email>" in the From header
+display_name = "Your Name"
+
+# Which SMTP server to use (must match an smtp_servers.name)
+smtp_server = "gmail"
+
+# Allowed Reply-To addresses for this identity
+reply_to = ["yourname@gmail.com"]
+
+
+[[identities]]
+name = "Work Email"
+email = "you@company.com"
+display_name = "Your Name - Company"
+smtp_server = "company"
+reply_to = ["you@company.com", "team@company.com", "support@company.com"]
+
+
+[[identities]]
+# Example: Same SMTP server, different FROM address
+name = "Work Support Alias"
+email = "support@company.com"
+display_name = "Support Team"
+smtp_server = "company"  # Reuses the same SMTP server
+reply_to = ["support@company.com", "you@company.com"]
+
+
+[[identities]]
+# Example: Using the base64 password SMTP server
+name = "Example Account"
+email = "user@example.com"
+display_name = "Example User"
+smtp_server = "example_with_base64"
+reply_to = ["user@example.com"]
