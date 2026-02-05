@@ -182,6 +182,30 @@ password = "eW91ci1wYXNzd29yZA=="
 password_encoding = "base64"
 ```
 
+### Security: Config File Permissions
+
+**IMPORTANT:** Your `~/.tmail.conf` file may contain sensitive information (passwords, email addresses). You should restrict its permissions to prevent unauthorized access.
+
+**Recommended permissions:**
+```bash
+# Make config readable/writable only by you
+chmod 600 ~/.tmail.conf
+```
+
+**Check current permissions:**
+```bash
+ls -l ~/.tmail.conf
+# Should show: -rw------- (600)
+```
+
+`tmail` will warn you if your config file has overly permissive permissions (readable by group or others).
+
+**Best practices:**
+- Use `password_cmd` instead of storing passwords directly in the config
+- Never commit `.tmail.conf` to version control
+- Use base64 encoding only as obfuscation, not as real security
+- Consider using a password manager (Keychain, pass, 1Password) with `password_cmd`
+
 ## Usage Examples
 
 ### Basic Usage

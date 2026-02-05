@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import platform
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -45,6 +46,20 @@ class Args:
     list_accounts: bool = False
 
 
+def _get_version_string() -> str:
+    """Get enhanced version string with Python and platform info."""
+    py_version = f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
+    py_impl = platform.python_implementation()
+    os_info = platform.system()
+    arch = platform.machine()
+    
+    return (
+        f"tmail {__version__}\n"
+        f"Python: {py_impl} {py_version}\n"
+        f"Platform: {os_info} {arch}"
+    )
+
+
 def create_parser() -> argparse.ArgumentParser:
     """Create the argument parser."""
     parser = argparse.ArgumentParser(
@@ -56,7 +71,7 @@ def create_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--version",
         action="version",
-        version=f"%(prog)s {__version__}",
+        version=_get_version_string(),
     )
 
     # Recipients (positional)

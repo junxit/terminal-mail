@@ -1,0 +1,53 @@
+[2026-02-05] - Version 0.1.0
+
+Added (High Priority Enhancements):
+- CONTRIBUTING.md with guidelines for code style, testing, commit messages aligned with user preferences
+- GitHub Actions CI/CD workflow (.github/workflows/ci.yml)
+  - Tests on Python 3.11, 3.12, 3.13
+  - Coverage reporting with Codecov integration
+  - Lint checks with ruff (continue-on-error)
+- Config file permissions security check in config.py
+  - Runtime warnings for overly permissive ~/.tmail.conf permissions
+  - Warns if readable/writable by group or others
+  - Security best practices section in README.md
+- Enhanced --version command output
+  - Shows Python implementation and version
+  - Shows platform and architecture
+  - Example: "tmail 0.1.0\nPython: CPython 3.13.11\nPlatform: Darwin arm64"
+
+Changed:
+- README.md: Added "Security: Config File Permissions" section with best practices
+
+Technical Details:
+- All 97 tests passing
+- Config permission warnings appear in test output (expected behavior for temp files)
+- Uses os.stat() and stat module for permission checks (Unix/Linux/macOS)
+- Permission checks gracefully skipped on Windows or if unavailable
+
+---
+
+[2026-01-24] - Version 0.1.0 (Initial Release)
+
+Added:
+- Initial Terminal Mail (tmail) implementation
+- SMTP server and identity separation
+  - SmtpServer class with friendly names
+  - Identity class with friendly names
+  - Multiple identities can share same SMTP server
+- Password encoding support (plain and base64)
+- Interactive composer with dropdown-style FROM/REPLY-TO selection
+- CLI flags: --identity, --display-name, --from, --reply-to
+- Configuration via ~/.tmail.conf (TOML format)
+- mail/mailx compatible CLI parameters
+- Test suite (97 tests)
+- MIT License
+- README.md with comprehensive documentation
+- .gitignore for Python projects
+
+Features:
+- Configuration-based SMTP with multiple servers and identities
+- Secure password handling (command-based or encoded)
+- Interactive mode with editor ($EDITOR)
+- Retry logic with exponential backoff
+- Dry-run mode
+- Attachment support

@@ -3,8 +3,11 @@
 from __future__ import annotations
 
 import base64
+import os
+import stat
 import subprocess
 import sys
+import warnings
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -268,6 +271,9 @@ def load_config(config_path: Path | None = None) -> Config:
 
     if not path.exists():
         raise ConfigError(f"Config file not found: {path}")
+    
+    # Check file permissions for security
+    _check_config_permissions(path)
 
     try:
         with open(path, "rb") as f:
@@ -299,6 +305,43 @@ def load_config(config_path: Path | None = None) -> Config:
             )
 
     return Config(defaults=defaults, smtp_servers=smtp_servers, identities=identities)
+
+
+def _check_config_permissions(config_path: Path) -> None:
+    """Check config file permissions and warn if insecure.
+    
+    Args:
+        config_path: Path to the config file.
+    """
+    try:
+        file_stat = os.stat(config_path)
+        mode = file_stat.st_mode
+        
+        # Check if file is readable by group or others
+        is_group_readable = bool(mode & stat.S_IRGRP)
+        is_other_readable = bool(mode & stat.S_IROTH)
+        is_group_writable = bool(mode & stat.S_IWGRP)
+        is_other_writable = bool(mode & stat.S_IWOTH)
+        
+        if is_other_readable or is_other_writable:
+            warnings.warn(
+                f"\n⚠️  WARNING: Config file {config_path} is readable or writable by others!\n"
+                f"   This may expose passwords and sensitive information.\n"
+                f"   Recommended: chmod 600 {config_path}",
+                UserWarning,
+                stacklevel=3,
+            )
+        elif is_group_readable or is_group_writable:
+            warnings.warn(
+                f"\n⚠️  WARNING: Config file {config_path} is readable or writable by group!\n"
+                f"   Consider restricting permissions if it contains sensitive data.\n"
+                f"   Recommended: chmod 600 {config_path}",
+                UserWarning,
+                stacklevel=3,
+            )
+    except (OSError, AttributeError):
+        # On Windows or if we can't check permissions, skip the check
+        pass
 
 
 def create_empty_config() -> Config:
