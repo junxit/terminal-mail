@@ -1,5 +1,9 @@
 [2026-02-05] - Version 0.1.0
 
+Fixed:
+- GitHub Actions CI workflow: Use `uv run --extra dev` instead of `uv pip install` to avoid venv requirement
+- GitHub Actions CI workflow: Removed uv cache dependency on missing uv.lock file
+
 Added (High Priority Enhancements):
 - CONTRIBUTING.md with guidelines for code style, testing, commit messages aligned with user preferences
 - GitHub Actions CI/CD workflow (.github/workflows/ci.yml)
