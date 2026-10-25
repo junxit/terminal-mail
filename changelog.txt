@@ -1,3 +1,11 @@
+[2026-10-25] - Version 0.1.0
+
+Added:
+- Dependabot version updates (.github/dependabot.yml): weekly checks of the pyproject.toml dependencies and the GitHub Actions in ci.yml, minor and patch bumps grouped
+- Dependabot alerts and security updates enabled on the repository
+
+---
+
 [2026-02-05] - Version 0.1.0
 
 Fixed:
